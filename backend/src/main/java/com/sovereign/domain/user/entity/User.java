@@ -18,7 +18,10 @@ public class User extends BaseEntity {
     private String passwordHash;
 
     @Column(nullable = false)
-    private String fullName;
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
 
     @Column(nullable = false)
     private boolean enabled = true;
