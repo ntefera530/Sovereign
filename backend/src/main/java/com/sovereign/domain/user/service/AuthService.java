@@ -38,7 +38,7 @@ public class AuthService {
 
         // Does email already exist?
         if (userRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already in use"); // replace with proper exception later
+            throw new DuplicateEmailException("Email already in use");
         }
 
         // Create user
@@ -67,7 +67,7 @@ public class AuthService {
         );
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));    
 
         // Revoke existing refresh tokens
         refreshTokenRepository.deleteByUserId(user.getId());
@@ -80,10 +80,10 @@ public class AuthService {
 
     public AuthResponse refresh(RefreshTokenRequest request) {
         RefreshToken stored = refreshTokenRepository.findByToken(request.refreshToken())
-                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
-
+                .orElseThrow(() -> new InvalidTokenException("Refresh token not found"));
+    
         if (stored.isRevoked() || stored.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Refresh token expired or revoked");
+            throw new InvalidTokenException("Refresh token expired or revoked");
         }
 
         String email = jwtService.extractEmail(request.refreshToken());
