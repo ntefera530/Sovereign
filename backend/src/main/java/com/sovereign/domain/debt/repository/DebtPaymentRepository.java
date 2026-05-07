@@ -1,7 +1,11 @@
 package com.sovereign.domain.debt.repository;
 
 import com.sovereign.domain.debt.entity.DebtPayment;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,4 +24,8 @@ public interface DebtPaymentRepository extends JpaRepository<DebtPayment, UUID> 
 
     @Query("SELECT SUM(dp.extraAmount) FROM DebtPayment dp WHERE dp.debt.id = :debtId")
     BigDecimal getTotalExtraPaymentsByDebtId(@Param("debtId") UUID debtId);
+
+    @Modifying
+    @Transactional
+    void deleteByDebtId(UUID debtId);
 }
