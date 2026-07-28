@@ -16,6 +16,20 @@ const s = {
   },
 }
 
+function Field({ id, label, error, children }) {
+  return (
+    <div>
+      <label style={s.label}>{label}</label>
+      {children}
+      {error && (
+        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#ef4444', textAlign: 'left' }}>
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
+  
 export default function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
@@ -60,17 +74,7 @@ export default function Register() {
     }
   }
 
-  const Field = ({ id, label, children }) => (
-    <div>
-      <label style={s.label}>{label}</label>
-      {children}
-      {fieldErrors[id] && (
-        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#ef4444', textAlign: 'left' }}>
-          {fieldErrors[id]}
-        </p>
-      )}
-    </div>
-  )
+
 
   return (
     <div style={{
@@ -100,7 +104,7 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            <Field id="firstName" label="First Name">
+            <Field id="firstName" label="First Name" error={fieldErrors.firstName}>
               <input
                 value={form.firstName}
                 onChange={set('firstName')}
@@ -113,7 +117,7 @@ export default function Register() {
                 }}
               />
             </Field>
-            <Field id="lastName" label="Last Name">
+            <Field id="lastName" label="Last Name" error={fieldErrors.lastName}>
               <input
                 value={form.lastName}
                 onChange={set('lastName')}
@@ -128,7 +132,7 @@ export default function Register() {
             </Field>
           </div>
 
-          <Field id="email" label="Email">
+          <Field id="email" label="Email" error={fieldErrors.email}>
             <input
               type="email"
               value={form.email}
@@ -143,7 +147,7 @@ export default function Register() {
             />
           </Field>
 
-          <Field id="password" label="Password">
+          <Field id="password" label="Password" error={fieldErrors.password}>
             <div style={{ position: 'relative' }}>
               <input
                 type={showPassword ? 'text' : 'password'}

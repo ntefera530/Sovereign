@@ -3,6 +3,9 @@ package com.sovereign.config;
 import com.sovereign.config.security.JwtAuthFilter;
 import com.sovereign.config.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.config.Customizer;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()  // public endpoints
                 .anyRequest().authenticated()                  // everything else needs auth
