@@ -6,6 +6,7 @@ import Dashboard from './pages/dashboard/Dashboard'
 import Accounts from './pages/accounts/Accounts'
 import Debts from './pages/debt/Debts'
 import Budgets from './pages/budget/Budgets'
+import BudgetDetail from './pages/budget/BudgetDetail'
 import NetWorth from './pages/networth/NetWorth'
 import BillSplitter from './pages/bills/BillSplitter'
 import Settings from './pages/settings/Settings'
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="accounts" element={<Accounts />} />
         <Route path="debts" element={<Debts />} />
         <Route path="budgets" element={<Budgets />} />
+        <Route path="budgets/:id" element={<BudgetDetail />} />
         <Route path="networth" element={<NetWorth />} />
         <Route path="bills" element={<BillSplitter />} />
         <Route path="settings" element={<Settings />} />

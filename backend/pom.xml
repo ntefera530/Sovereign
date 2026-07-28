@@ -102,6 +102,12 @@
     		<version>0.12.5</version>
     		<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+    		<groupId>com.plaid</groupId>
+    		<artifactId>plaid-java</artifactId>
+   			<version>41.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -2,6 +2,7 @@ package com.sovereign.domain.account.entity;
 
 import com.sovereign.common.entity.BaseEntity;
 import com.sovereign.common.enums.AccountType;
+import com.sovereign.domain.plaid.entity.PlaidItem;
 import com.sovereign.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,4 +34,11 @@ public class Account extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isActive = true;
+
+    @Column(name = "plaid_account_id")
+    private String plaidAccountId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plaid_item_id")
+    private PlaidItem plaidItem;
 }
