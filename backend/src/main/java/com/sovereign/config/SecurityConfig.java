@@ -1,5 +1,6 @@
 package com.sovereign.config;
 
+import com.sovereign.config.security.JwtAuthEntryPoint;
 import com.sovereign.config.security.JwtAuthFilter;
 import com.sovereign.config.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsServiceImpl userDetailsService;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,6 +42,9 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no sessions, JWT only
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(jwtAuthEntryPoint) // consistent JSON 401 body
             )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
