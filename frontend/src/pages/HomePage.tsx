@@ -25,6 +25,7 @@ const ACCOUNT_TYPE_OPTIONS: { value: AccountType; label: string }[] = [
 ].map((v) => ({ value: v as AccountType, label: enumLabel(v) }));
 
 export default function HomePage() {
+  
   const [accounts, setAccounts] = useState<AccountResponse[]>([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [netWorth, setNetWorth] = useState<NetWorthResponse | null>(null);
