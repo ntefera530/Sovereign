@@ -4,16 +4,21 @@ import DebtPage from "@/pages/DebtPage";
 import BudgetPage from "@/pages/BudgetPage";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
+import DashboardPage from "@/pages/DashboardPage";
+import Layout from "./components/Layout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/debt" element={<DebtPage />} />
           <Route path="/budget" element={<BudgetPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
