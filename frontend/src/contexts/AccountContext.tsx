@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-import type { DebtResponse, AccountResponse } from '@/types/types';
+import type { DebtResponse, AccountResponse, PlaidItemResponse } from '@/types/types';
 
 import { accountsApi } from "@/api/accounts";
 import { debtsApi } from "@/api/debts";
@@ -24,6 +24,7 @@ interface AccountsProviderProps {
 export function AccountsProvider({ children }: AccountsProviderProps) {
   const [accounts, setAccounts] = useState<AccountResponse[] | null>(null);
   const [debts, setDebts] = useState<DebtResponse[] | null>(null);
+  const [plaidItems, setPlaidItems] = useState<PlaidItemResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -32,13 +33,15 @@ export function AccountsProvider({ children }: AccountsProviderProps) {
     setError(null);
     
     try {
-      const [accountsRes, debtsRes] = await Promise.all([
+      const [accountsRes, debtsRes, plaidItemsRes] = await Promise.all([
         accountsApi.getAll(),
         debtsApi.getAll(),
+        plaidApi.getItems(),
       ]);
 
-      //setAccounts(accountsRes);
+      setAccounts(accountsRes.accounts);
       setDebts(debtsRes);
+      setPlaidItems(plaidItemsRes);
 
     } catch (e) {
       setError(e instanceof Error ? e : new Error('Failed to load account data'));
@@ -51,6 +54,7 @@ export function AccountsProvider({ children }: AccountsProviderProps) {
     refreshData();
   }, [refreshData]);
 
+  //TODO: memoize the context value to prevent unnecessary re-renders
   const value: AccountsContextValue = {
     accounts,
     debts,
@@ -64,4 +68,12 @@ export function AccountsProvider({ children }: AccountsProviderProps) {
       {children}
     </AccountsContext.Provider>
   );
+}
+
+export function useAccounts() : AccountsContextValue {
+  const context = useContext(AccountsContext);
+  if (context === undefined) {
+    throw new Error("useAccounts must be used within an AccountsProvider");
+  }
+  return context;
 }

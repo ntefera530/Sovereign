@@ -67,10 +67,11 @@ public class PlaidService {
     public List<PlaidItemResponse> exchangePublicToken(
             UserDetailsImpl userDetails, ExchangePublicTokenRequest request) {
         try {
-            ItemPublicTokenExchangeRequest exchangeRequest =
-                new ItemPublicTokenExchangeRequest().publicToken(request.publicToken());
-            Response<ItemPublicTokenExchangeResponse> exchangeResponse =
-                plaidApi.itemPublicTokenExchange(exchangeRequest).execute();
+            ItemPublicTokenExchangeRequest exchangeRequest = new ItemPublicTokenExchangeRequest().publicToken(request.publicToken());
+
+            // Exchange the public token for an access token and item ID - returned by Plaid
+            Response<ItemPublicTokenExchangeResponse> exchangeResponse = plaidApi.itemPublicTokenExchange(exchangeRequest).execute();
+               
 
             if (!exchangeResponse.isSuccessful() || exchangeResponse.body() == null) {
                 log.error("Plaid token exchange failed: {}", errorBody(exchangeResponse));
@@ -80,6 +81,7 @@ public class PlaidService {
             String accessToken = exchangeResponse.body().getAccessToken();
             String itemId = exchangeResponse.body().getItemId();
 
+            // Save the Plaid item to the database
             PlaidItem plaidItem = new PlaidItem();
             plaidItem.setUser(userDetails.getUser());
             plaidItem.setItemId(itemId);
@@ -89,6 +91,7 @@ public class PlaidService {
             plaidItem.setLastSyncedAt(LocalDateTime.now());
             plaidItemRepository.save(plaidItem);
 
+            // Import accounts associated with the Plaid item - it Chase Bank can have (checking, sabings, credit card, etc.)
             importAccounts(userDetails, plaidItem, accessToken);
 
             log.info("Plaid item linked: {} for user {}", itemId, userDetails.getUser().getId());
@@ -163,6 +166,20 @@ public class PlaidService {
             .stream().map(this::toPlaidItemResponse).toList();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // ── Helpers ──────────────────────────────────────────────
 
     private void importAccounts(UserDetailsImpl userDetails, PlaidItem plaidItem, String accessToken)
@@ -174,10 +191,15 @@ public class PlaidService {
             throw new BadRequestException("Could not fetch accounts from bank");
         }
 
+        //TODO: Need to differentiate between accounts (checking, savings, etc)debts (credic card, loan, etc) and investments (stocks, crypto, etc)
         for (AccountBase plaidAccount : accountsResponse.body().getAccounts()) {
             if (accountRepository.findByPlaidAccountId(plaidAccount.getAccountId()).isPresent()) {
                 continue; // already imported
             }
+
+            // if(plaidAccount.getType().CREDIT == "credit" || plaidAccount.getType() == "loan") {
+            //     continue; // skip credit and loan accounts for now
+            // }
             Account account = new Account();
             account.setUser(userDetails.getUser());
             account.setName(plaidAccount.getName());
