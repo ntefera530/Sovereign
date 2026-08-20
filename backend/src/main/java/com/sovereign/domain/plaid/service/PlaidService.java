@@ -11,6 +11,7 @@ import com.sovereign.domain.account.entity.Transaction;
 import com.sovereign.domain.account.repository.AccountRepository;
 import com.sovereign.domain.account.repository.TransactionRepository;
 import com.sovereign.domain.account.service.AccountService;
+import com.sovereign.domain.debt.entity.Debt;
 import com.sovereign.domain.plaid.dto.request.ExchangePublicTokenRequest;
 import com.sovereign.domain.plaid.dto.response.LinkTokenResponse;
 import com.sovereign.domain.plaid.dto.response.PlaidItemResponse;
@@ -197,6 +198,15 @@ public class PlaidService {
                 continue; // already imported
             }
 
+            //AccountType plaidType = plaidAccount.getType();
+
+            // switch (plaidType) {
+            //     case DEPOSITORY -> importDepositoryAccount(userDetails, plaidItem, plaidAccount);
+            //     case CREDIT, LOAN -> importDebtAccount(userDetails, plaidItem, plaidAccount); // pulled from /liabilities/get separately
+            //     case INVESTMENT, BROKERAGE -> importInvestmentAccount(userDetails, plaidItem, plaidAccount);
+            //     default -> importDepositoryAccount(userDetails, plaidItem, plaidAccount); // or a generic "other" bucket
+            // }
+
             // if(plaidAccount.getType().CREDIT == "credit" || plaidAccount.getType() == "loan") {
             //     continue; // skip credit and loan accounts for now
             // }
@@ -214,6 +224,36 @@ public class PlaidService {
             accountRepository.save(account);
         }
     }
+
+    // TODO:
+    private void importDebtAccount (UserDetailsImpl userDetails, PlaidItem plaidItem, String accessToken) throws IOException {
+        Debt debt = new Debt();
+        debt.setUser(userDetails.getUser());
+    }
+
+    // TODO:
+    private void importInvestmentAccount (UserDetailsImpl userDetails, PlaidItem plaidItem, String accessToken) throws IOException {
+        
+    }
+
+    // TODO:
+    private void importDepositAccount (UserDetailsImpl userDetails, PlaidItem plaidItem, String accessToken) throws IOException {
+
+        Account account = new Account();
+        account.setUser(userDetails.getUser());
+          
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     private void upsertTransaction(com.plaid.client.model.Transaction plaidTx) {
         Account account = accountRepository.findByPlaidAccountId(plaidTx.getAccountId()).orElse(null);
